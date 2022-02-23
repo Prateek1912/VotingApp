@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AllPartyVotes.cs" />
+    <Compile Include="ExecuteQuery.cs" />
     <Compile Include="LeadingParty.cs" />
     <Compile Include="MenuPages.cs" />
     <Compile Include="Program.cs" />

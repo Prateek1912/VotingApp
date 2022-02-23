@@ -7,13 +7,14 @@ using System.Data.SqlClient;
 
 namespace Voting_App
 {
-    internal class LeadingParty
+    internal class LeadingParty:AllPartyVotes
     {
         public static void LeadingPartyFunc(SqlConnection con)
         {
             bool flag = false;
             ConsoleKeyInfo info=default;
             SqlCommand cmd=null;
+            AllPartyVotes obj=new LeadingParty();    //parent class reference with child class object
             while (true)
             {
                 Console.Clear();
@@ -25,21 +26,17 @@ namespace Voting_App
                 {
                     while (true)
                     {
-                        Console.Clear();
-                        Console.WriteLine(@"1. Election 1
-2. Election 2
-3. Exit");
-                        Console.Write("\nEnter your choice (1-3): ");
+                        MenuPages.ElectionMenu();
                         var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
                         if (isValidChoice)
                         {
                             switch (ch)
                             {
                                 case 1:
-                                    PrintLeadingParty(con, cmd, info, "1");
+                                    obj.Print(con, cmd, info, "1");    //runtime polymorphism
                                     break;
                                 case 2:
-                                    PrintLeadingParty(con, cmd, info, "2");
+                                    obj.Print(con, cmd, info, "2");
                                     break;
                                 case 3:
                                     flag = true;
@@ -87,11 +84,10 @@ namespace Voting_App
             }
         }
 
-        private static void PrintLeadingParty(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
+        public override void Print(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
         {
             string query = @"select distinct(parties.name),partystatus.votes from parties,partystatus where parties.partyid=partystatus.partyid and partystatus.votes=(select max(votes) from partystatus where name!='NOTA' and electionid="+electionid+")";
-            cmd = new SqlCommand(query, con);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query, con);
             Console.Clear();
             var dictionary = new Dictionary<string, string>();
             while (reader.Read())

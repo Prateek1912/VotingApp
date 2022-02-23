@@ -14,6 +14,7 @@ namespace Voting_App
             bool flag = false;
             ConsoleKeyInfo info=default;
             SqlCommand cmd=default;
+            var obj=new AllPartyVotes();    
             while (true)
             {
                 Console.Clear();
@@ -30,10 +31,10 @@ namespace Voting_App
                             switch (ch)
                             {
                                 case 1:
-                                    PrintAllPartyVotes(con, cmd, info, "1");
+                                    obj.Print(con, cmd, info, "1");
                                     break;
                                 case 2:
-                                    PrintAllPartyVotes(con, cmd, info, "2");
+                                    obj.Print(con, cmd, info, "2");
                                     break;
                                 case 3:
                                     flag = true;
@@ -77,12 +78,11 @@ namespace Voting_App
 
         }
 
-        private static void PrintAllPartyVotes(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
+        public virtual void Print(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
         {
             Console.Clear();
             string query = @"select parties.name,partystatus.votes from parties,PartyStatus where parties.partyid=PartyStatus.partyid and electionid="+electionid+"order by PartyStatus.votes desc";
-            cmd = new SqlCommand(query, con);
-            SqlDataReader reader = cmd.ExecuteReader();
+            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query, con);
             Console.WriteLine("ELECTION {0} STANDINGS:\n", electionid);
             Console.WriteLine("PARTY                VOTES\n");
             while (reader.Read())

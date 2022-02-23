@@ -16,7 +16,7 @@ namespace Voting_App
         {
             ConsoleKeyInfo info=default;
             SqlDataReader rdr=null;
-            SqlCommand cmd;
+            SqlCommand cmd=default;
             string sql="";
     
             while (true)
@@ -27,8 +27,8 @@ namespace Voting_App
                 var isVoterIDValid = int.TryParse(voterID, out int x);
                 if (isVoterIDValid && voterID.Length == 6)
                 {
-                    cmd = new SqlCommand("SELECT * from voters where voterid=" + voterID, con);
-                    rdr = cmd.ExecuteReader();
+                    sql = "SELECT * from voters where voterid=" + voterID;
+                    rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
 
 
                     if (rdr.HasRows)
@@ -36,6 +36,7 @@ namespace Voting_App
 
                         while (true)
                         {
+                            Console.WriteLine("Choose the election in which you want to vote:");
                             MenuPages.ElectionMenu();
                             var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
                             if (isValidChoice)
@@ -44,8 +45,7 @@ namespace Voting_App
                                 {
                                     case 1:
                                         sql = @"select hasvoted from votingstatus where electionid=1 and voterid=" + voterID;
-                                        cmd=new SqlCommand(sql, con);
-                                        rdr=cmd.ExecuteReader();
+                                        rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
                                         if (rdr.Read())
                                         {
                                             if (rdr.GetBoolean(0))
@@ -118,8 +118,7 @@ namespace Voting_App
                                         break;
                                     case 2:
                                         sql = @"select hasvoted from votingstatus where electionid=2 and voterid=" + voterID;
-                                        cmd = new SqlCommand(sql, con);
-                                        rdr = cmd.ExecuteReader();
+                                        rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
                                         if (rdr.Read())
                                         {
                                             if (rdr.GetBoolean(0))
@@ -260,18 +259,11 @@ namespace Voting_App
         }
         private static void UpdateTables(SqlConnection con, SqlCommand cmd,ConsoleKeyInfo info,string partyid,string electionid,string name)
         {
-            
-            using (SqlDataAdapter adapter = new SqlDataAdapter())
-            {
-                string sql = @"update votingstatus set hasvoted=1 where voterid=" + voterID +"and electionid="+electionid;
-                cmd = new SqlCommand(sql, con);
-                adapter.UpdateCommand = new SqlCommand(sql, con);
-                adapter.UpdateCommand.ExecuteNonQuery();
-                sql = @"update partystatus set votes=votes+1 where partyid="+partyid+"and electionid="+electionid;
-                cmd = new SqlCommand(sql, con);
-                adapter.UpdateCommand = new SqlCommand(sql, con);
-                adapter.UpdateCommand.ExecuteNonQuery();
-            }
+
+            string sql = @"update votingstatus set hasvoted=1 where voterid=" + voterID + "and electionid=" + electionid;
+            ExecuteQuery.ExecuteUpdateQuery(sql, con);
+            sql = @"update partystatus set votes=votes+1 where partyid=" + partyid + "and electionid=" + electionid;
+            ExecuteQuery.ExecuteUpdateQuery(sql, con);
             Console.Clear();
             Console.WriteLine("Congratulations!!! You have successfully voted for {0}!!!",name);
             Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
@@ -283,15 +275,11 @@ namespace Voting_App
 
         private static string GetPartyID(SqlConnection con,string name)
         {
-            string sql= @"select partyid from parties where name='"+name+"'";
-            SqlCommand cmd = new SqlCommand(sql, con);
             string partyID = "";
-            using (SqlDataReader rdr = cmd.ExecuteReader())
-            {
-                if(rdr.Read())
-                    partyID=Convert.ToString(rdr.GetValue(0));
-
-            }
+            string sql = @"select partyid from parties where name='" + name + "'";
+            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
+            if (rdr.Read())
+                partyID = Convert.ToString(rdr.GetValue(0));
             return partyID;
         }
       

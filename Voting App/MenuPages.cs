@@ -26,7 +26,6 @@ namespace Voting_App
         public static void ElectionMenu()
         {
             Console.Clear();
-            Console.WriteLine("Choose the election in which you want to vote:");
             Console.WriteLine(@"1. Election 1
 2. Election 2
 3. Exit");

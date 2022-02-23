@@ -24,8 +24,10 @@ namespace Voting_App
                 Console.Clear();
                 Console.Write("Enter your Aadhar number(12-digit number): ");
                 aadhar=Console.ReadLine();
+                aadhar=aadhar.TrimStart('0');
+     
                 var isAadharValid = long.TryParse(aadhar, out long y);
-                if (!isAadharValid || aadhar.Length != 12)
+                if (!isAadharValid || aadhar.Length != 12||y<0)
                 {
                     Console.Clear();
                     Console.WriteLine("Please enter a valid aadhar number!!!!");
@@ -38,8 +40,7 @@ namespace Voting_App
                 {
                     Console.Clear();
                     string query = @"select aadhar from voters";
-                    cmd = new SqlCommand(query, con);
-                    reader = cmd.ExecuteReader();
+                    reader = ExecuteQuery.ExecuteSelectQuery(query, con);
                     bool flag2 = false;
                     while (reader.Read())
                     {
@@ -76,9 +77,7 @@ namespace Voting_App
                             else
                             {
                                 string sql = @"select max(voterid) from voters";
-                                cmd = new SqlCommand(sql, con);
-                                reader = cmd.ExecuteReader();
-
+                                reader=ExecuteQuery.ExecuteSelectQuery(sql, con);
                                 if (reader.Read())
                                     voterID = Convert.ToInt32(reader.GetValue(0)) + 1;
                                 
