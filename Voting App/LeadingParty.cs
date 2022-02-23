@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace Voting_App
 {
-    internal class LeadingParty:AllPartyVotes
+    internal class LeadingParty
     {
         public static void LeadingPartyFunc(SqlConnection con)
         {
@@ -87,7 +87,7 @@ namespace Voting_App
             }
         }
 
-        public static void PrintLeadingParty(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
+        private static void PrintLeadingParty(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
         {
             string query = @"select distinct(parties.name),partystatus.votes from parties,partystatus where parties.partyid=partystatus.partyid and partystatus.votes=(select max(votes) from partystatus where name!='NOTA' and electionid="+electionid+")";
             cmd = new SqlCommand(query, con);

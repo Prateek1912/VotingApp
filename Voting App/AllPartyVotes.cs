@@ -77,7 +77,7 @@ namespace Voting_App
 
         }
 
-        public static void PrintAllPartyVotes(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
+        private static void PrintAllPartyVotes(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
         {
             Console.Clear();
             string query = @"select parties.name,partystatus.votes from parties,PartyStatus where parties.partyid=PartyStatus.partyid and electionid="+electionid+"order by PartyStatus.votes desc";
