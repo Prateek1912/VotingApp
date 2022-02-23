@@ -23,11 +23,7 @@ namespace Voting_App
                 {
                     while (true)
                     {
-                        Console.Clear();
-                        Console.WriteLine(@"1. Election 1
-2. Election 2
-3. Exit");
-                        Console.Write("\nEnter your choice (1-3): ");
+                        MenuPages.ElectionMenu();
                         var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
                         if (isValidChoice)
                         {

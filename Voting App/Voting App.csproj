@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AllPartyVotes.cs" />
     <Compile Include="LeadingParty.cs" />
+    <Compile Include="MenuPages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registration.cs" />

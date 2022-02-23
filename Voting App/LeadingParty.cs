@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 
 namespace Voting_App
 {
-    internal class LeadingParty
+    internal class LeadingParty:AllPartyVotes
     {
         public static void LeadingPartyFunc(SqlConnection con)
         {

@@ -36,12 +36,7 @@ namespace Voting_App
 
                         while (true)
                         {
-                            Console.Clear();
-                            Console.WriteLine("Choose the election in which you want to vote:");
-                            Console.WriteLine(@"1. Election 1
-2. Election 2
-3. Exit");
-                            Console.Write("\nEnter your choice (1-3): ");
+                            MenuPages.ElectionMenu();
                             var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
                             if (isValidChoice)
                             {
@@ -66,15 +61,7 @@ namespace Voting_App
                                             {
                                                 while (true)
                                                 {
-                                                    Console.Clear();
-                                                    Console.WriteLine("PARTIES:");
-                                                    Console.WriteLine(@"
-1. Party A
-2. Party B
-3. Party F
-4. None of the above");
-                                                    Console.WriteLine();
-                                                    Console.Write("Enter your choice (1-4): ");
+                                                    MenuPages.Election1Menu();
                                                     bool flag1 = false;
                                                     var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
                                                     if (!isValidCh)
@@ -145,17 +132,7 @@ namespace Voting_App
                                                 bool flag2 = false;
                                                 while (true)
                                                 {
-                                                    Console.Clear();
-                                                    Console.WriteLine("PARTIES:");
-                                                    Console.WriteLine(@"
-1. Party A
-2. Party B
-3. Party C
-4. Party D
-5. Party E
-6. None of the above");
-                                                    Console.WriteLine();
-                                                    Console.Write("Enter your choice (1-6): ");
+                                                    MenuPages.Election2Menu();
                                                     var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
                                                     if (!isValidCh)
                                                     {
@@ -271,7 +248,7 @@ namespace Voting_App
             }
                    
         }
-        public static void UpdateTables(SqlConnection con, SqlCommand cmd,ConsoleKeyInfo info,string partyid,string electionid)
+        private static void UpdateTables(SqlConnection con, SqlCommand cmd,ConsoleKeyInfo info,string partyid,string electionid)
         {
             
             using (SqlDataAdapter adapter = new SqlDataAdapter())
@@ -294,7 +271,7 @@ namespace Voting_App
 
         }
 
-        public static string GetPartyID(SqlConnection con,string name)
+        private static string GetPartyID(SqlConnection con,string name)
         {
             string sql= @"select partyid from parties where name="+name;
             SqlCommand cmd = new SqlCommand(sql, con);
