@@ -80,19 +80,23 @@ namespace Voting_App
                                                         {
                                                             case 1:
                                                                 partyid = GetPartyID(con, "Party A");
-                                                                UpdateTables(con, cmd, info, partyid,"1");
+                                                                UpdateTables(con, cmd, info, partyid,"1","Party A");
+                                                                flag1 = true;
                                                                 break;
                                                             case 2:
                                                                 partyid = GetPartyID(con, "Party B");
-                                                                UpdateTables(con, cmd, info,partyid,"1");
+                                                                UpdateTables(con, cmd, info,partyid,"1","Party B");
+                                                                flag1 = true;
                                                                 break;
                                                             case 3:
                                                                 partyid = GetPartyID(con, "Party F");
-                                                                UpdateTables(con, cmd, info,partyid,"1");
+                                                                UpdateTables(con, cmd, info,partyid,"1","Party C");
+                                                                flag1 = true;
                                                                 break;
                                                             case 4:
                                                                 partyid = GetPartyID(con, "NOTA");
-                                                                UpdateTables(con, cmd, info, partyid,"1");
+                                                                UpdateTables(con, cmd, info, partyid,"1","Party D");
+                                                                flag1 = true;
                                                                 break;
                                                             default:
                                                                 Console.Clear();
@@ -150,27 +154,33 @@ namespace Voting_App
                                                         {
                                                             case 1:
                                                                 partyid = GetPartyID(con, "Party A");
-                                                                UpdateTables(con, cmd, info, partyid,"2");
+                                                                UpdateTables(con, cmd, info, partyid,"2","Party A");
+                                                                flag2 = true;
                                                                 break;
                                                             case 2:
                                                                 partyid = GetPartyID(con, "Party B");
-                                                                UpdateTables(con, cmd,  info,partyid,"2");
+                                                                UpdateTables(con, cmd,  info,partyid,"2","Party B");
+                                                                flag2 = true;
                                                                 break;
                                                             case 3:
                                                                 partyid = GetPartyID(con, "Party C");
-                                                                UpdateTables(con, cmd,info, partyid,"2");
+                                                                UpdateTables(con, cmd,info, partyid,"2","Party C");
+                                                                flag2 = true;
                                                                 break;
                                                             case 4:
                                                                 partyid = GetPartyID(con, "Party D");
-                                                                UpdateTables(con, cmd,info,partyid,"2");
+                                                                UpdateTables(con, cmd,info,partyid,"2","Party D");
+                                                                flag2 = true;
                                                                 break;
                                                             case 5:
                                                                 partyid = GetPartyID(con, "Party E");
-                                                                UpdateTables(con, cmd,info,partyid,"2");
+                                                                UpdateTables(con, cmd,info,partyid,"2","Party E");
+                                                                flag2 = true;
                                                                 break;
                                                             case 6:
                                                                 partyid = GetPartyID(con, "Party F");
-                                                                UpdateTables(con, cmd,info,partyid,"2");
+                                                                UpdateTables(con, cmd,info,partyid,"2","Party F");
+                                                                flag2 = true;
                                                                 break;
                                                             default:
                                                                 Console.Clear();
@@ -248,7 +258,7 @@ namespace Voting_App
             }
                    
         }
-        private static void UpdateTables(SqlConnection con, SqlCommand cmd,ConsoleKeyInfo info,string partyid,string electionid)
+        private static void UpdateTables(SqlConnection con, SqlCommand cmd,ConsoleKeyInfo info,string partyid,string electionid,string name)
         {
             
             using (SqlDataAdapter adapter = new SqlDataAdapter())
@@ -263,7 +273,7 @@ namespace Voting_App
                 adapter.UpdateCommand.ExecuteNonQuery();
             }
             Console.Clear();
-            Console.WriteLine("Congratulations!!! You have successfully voted!!!");
+            Console.WriteLine("Congratulations!!! You have successfully voted for {0}!!!",name);
             Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
             info = Console.ReadKey(true);
             if (info.Key == ConsoleKey.Enter)
@@ -273,7 +283,7 @@ namespace Voting_App
 
         private static string GetPartyID(SqlConnection con,string name)
         {
-            string sql= @"select partyid from parties where name="+name;
+            string sql= @"select partyid from parties where name='"+name+"'";
             SqlCommand cmd = new SqlCommand(sql, con);
             string partyID = "";
             using (SqlDataReader rdr = cmd.ExecuteReader())

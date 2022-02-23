@@ -76,7 +76,7 @@ namespace Voting_App
                             else
                             {
                                 string sql = @"select max(voterid) from voters";
-                                cmd = new SqlCommand(query, con);
+                                cmd = new SqlCommand(sql, con);
                                 reader = cmd.ExecuteReader();
 
                                 if (reader.Read())
