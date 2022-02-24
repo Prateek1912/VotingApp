@@ -11,7 +11,7 @@ namespace Voting_App
     {
         public static void LeadingPartyFunc(SqlConnection con)
         {
-            bool flag = false;
+            bool returnToMAinMenu = false;
             ConsoleKeyInfo info=default;
             SqlCommand cmd=null;
             AllPartyVotes obj=new LeadingParty();    //parent class reference with child class object
@@ -39,7 +39,7 @@ namespace Voting_App
                                     obj.Print(con, cmd, info, "2");
                                     break;
                                 case 3:
-                                    flag = true;
+                                    returnToMAinMenu = true;
                                     break;
                                 default:
                                     Console.Clear();
@@ -47,7 +47,7 @@ namespace Voting_App
                                     Console.WriteLine("\nPress any key to return to enter your choice again or press enter to return to the main menu...");
                                     info = Console.ReadKey(true);
                                     if (info.Key == ConsoleKey.Enter)
-                                        flag = true;
+                                        returnToMAinMenu = true;
                                     break;
                             }
                         }
@@ -59,12 +59,12 @@ namespace Voting_App
                             info = Console.ReadKey(true);
                             if (info.Key == ConsoleKey.Enter)
                             {
-                                flag = true;
+                                returnToMAinMenu = true;
                                 break;
                             }
 
                         }
-                        if (flag)
+                        if (returnToMAinMenu)
                            break;
                     }
                         
@@ -77,9 +77,9 @@ namespace Voting_App
                     Console.WriteLine("\nPress any key to enter the password again or press enter to return to the main menu..");
                     info = Console.ReadKey(true);
                     if(info.Key== ConsoleKey.Enter)
-                        flag = true;
+                        returnToMAinMenu = true;
                 }
-                if (flag)
+                if (returnToMAinMenu)
                     break;
             }
         }

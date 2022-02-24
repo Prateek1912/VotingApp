@@ -18,7 +18,7 @@ namespace Voting_App
             ConsoleKeyInfo info;
             SqlCommand cmd;
             SqlDataReader reader;
-            bool flag=false;
+            bool returnToMainMenu=false;
             while (true)
             {
                 Console.Clear();
@@ -34,29 +34,23 @@ namespace Voting_App
                     Console.WriteLine("\nPress any key to enter your aadhar number again or press enter to return to the main menu...");
                     info = Console.ReadKey(true);
                     if (info.Key == ConsoleKey.Enter)
-                        flag = true;
+                        returnToMainMenu= true;
                 }
                 else
                 {
                     Console.Clear();
-                    string query = @"select aadhar from voters";
+                    string query = @"select aadhar from voters where aadhar='"+aadhar+"'";
                     reader = ExecuteQuery.ExecuteSelectQuery(query, con);
-                    bool flag2 = false;
-                    while (reader.Read())
+                    if (reader.HasRows)
                     {
-                        if (reader.GetString(0) == aadhar)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Aadhar number already registered!!!! Please enter some other aadhar number");
-                            Console.WriteLine("\nPress any key to continue....");
-                            info= Console.ReadKey(true);
-                            flag2 = true;
-                            break;
-                        }
+                        Console.Clear();
+                        Console.WriteLine("Aadhar number already registered!!!! Please enter some other aadhar number");
+                        Console.WriteLine("\nPress any key to continue....");
+                        info = Console.ReadKey(true);
+                        break;
                     }
-                    if (flag2 == false)
+                    else
                     {
-              
                         while (true)
                         {
                             Console.Clear();
@@ -70,43 +64,43 @@ namespace Voting_App
                                 info = Console.ReadKey(true);
                                 if (info.Key == ConsoleKey.Enter)
                                 {
-                                    flag = true;
+                                    returnToMainMenu = true;
                                     break;
                                 }
                             }
                             else
                             {
                                 string sql = @"select max(voterid) from voters";
-                                reader=ExecuteQuery.ExecuteSelectQuery(sql, con);
+                                reader = ExecuteQuery.ExecuteSelectQuery(sql, con);
                                 if (reader.Read())
                                     voterID = Convert.ToInt32(reader.GetValue(0)) + 1;
-                                
+
                                 name = "'" + name + "'";
                                 aadhar = "'" + aadhar + "'";
-                                sql = @"insert into voters values (" + name + "," + aadhar + "," + (voterID) + ")" +@"
-insert into votingstatus values(" + voterID + ",1,0)"+@"
-insert into votingstatus values("+voterID+",2,0)";
-                          
-                                   
-                                var adapter = new SqlDataAdapter();
-                                cmd = new SqlCommand(sql, con);
-                                adapter.InsertCommand = new SqlCommand(sql, con);
-                                adapter.InsertCommand.ExecuteNonQuery();
+                                sql = @"insert into voters values (" + name + "," + aadhar + "," + (voterID) + ")" + @"
+insert into votingstatus values(" + voterID + ",1,0)" + @"
+insert into votingstatus values(" + voterID + ",2,0)";
+
+                                using (var adapter = new SqlDataAdapter())
+                                {
+                                    cmd = new SqlCommand(sql, con);
+                                    adapter.InsertCommand = new SqlCommand(sql, con);
+                                    adapter.InsertCommand.ExecuteNonQuery();
+                                }
                                 Console.Clear();
                                 Console.WriteLine("You have been successfully registered!!!!");
                                 Console.WriteLine("Your Voter ID is: {0}. This will be used for voting!!!", voterID);
                                 Console.WriteLine("\nPress any key to return to the main menu....");
-                                info= Console.ReadKey(true);
-                                flag = true;
+                                info = Console.ReadKey(true);
+                                returnToMainMenu = true;
                                 break;
-                               
+
 
                             }
                         }
-
                     }
                 }
-                if (flag)
+                if (returnToMainMenu)
                     break;
             }
         }

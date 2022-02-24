@@ -11,14 +11,13 @@ namespace Voting_App
     internal class Vote
     {
         private static string voterID;
-        private static bool flag = false;
+        private static bool returnToMainMenu;
         public static void VoteFunc(SqlConnection con)
         {
             ConsoleKeyInfo info=default;
             SqlDataReader rdr=null;
-            SqlCommand cmd=default;
             string sql="";
-    
+            returnToMainMenu=false;
             while (true)
             {
                 Console.Clear();
@@ -44,163 +43,13 @@ namespace Voting_App
                                 switch (ch)
                                 {
                                     case 1:
-                                        sql = @"select hasvoted from votingstatus where electionid=1 and voterid=" + voterID;
-                                        rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
-                                        if (rdr.Read())
-                                        {
-                                            if (rdr.GetBoolean(0))
-                                            {
-                                                Console.Clear();
-                                                Console.WriteLine("You have already voted in Election 1!!!!");
-                                                Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
-                                                info = Console.ReadKey(true);
-                                                if (info.Key == ConsoleKey.Enter)
-                                                    flag = true;
-                                            }
-                                            else
-                                            {
-                                                while (true)
-                                                {
-                                                    MenuPages.Election1Menu();
-                                                    bool flag1 = false;
-                                                    var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
-                                                    if (!isValidCh)
-                                                    {
-                                                        Console.Clear();
-                                                        Console.WriteLine("Please enter a number between 1-4 !!!!!");
-                                                        Console.WriteLine("\nPress any key to enter again or press enter to return to the previous menu...");
-                                                        info = Console.ReadKey(true);
-                                                        if (info.Key == ConsoleKey.Enter)
-                                                            break;
-                                                    }
-                                                    else
-                                                    {
-                                                        string partyid = "";
-                                                        switch (choice)
-                                                        {
-                                                            case 1:
-                                                                partyid = GetPartyID(con, "Party A");
-                                                                UpdateTables(con, cmd, info, partyid,"1","Party A");
-                                                                flag1 = true;
-                                                                break;
-                                                            case 2:
-                                                                partyid = GetPartyID(con, "Party B");
-                                                                UpdateTables(con, cmd, info,partyid,"1","Party B");
-                                                                flag1 = true;
-                                                                break;
-                                                            case 3:
-                                                                partyid = GetPartyID(con, "Party F");
-                                                                UpdateTables(con, cmd, info,partyid,"1","Party C");
-                                                                flag1 = true;
-                                                                break;
-                                                            case 4:
-                                                                partyid = GetPartyID(con, "NOTA");
-                                                                UpdateTables(con, cmd, info, partyid,"1","Party D");
-                                                                flag1 = true;
-                                                                break;
-                                                            default:
-                                                                Console.Clear();
-                                                                Console.WriteLine("Please enter a valid choice!!!");
-                                                                Console.WriteLine("\nPress any key to return to enter your choice again or press enter to the previous menu...");
-                                                                info = Console.ReadKey(true);
-                                                                if (info.Key == ConsoleKey.Enter)
-                                                                    flag1 = true;
-                                                                break;
-                                                        }
-                                                        if (flag)
-                                                            break;
-                                                    }
-                                                    if (flag1)
-                                                        break;
-                                                }
-                                            }
-                                        }
+                                        VoteInElection1(con);
                                         break;
                                     case 2:
-                                        sql = @"select hasvoted from votingstatus where electionid=2 and voterid=" + voterID;
-                                        rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
-                                        if (rdr.Read())
-                                        {
-                                            if (rdr.GetBoolean(0))
-                                            {
-                                                Console.Clear();
-                                                Console.WriteLine("You have already voted in Election 2!!!!");
-                                                Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
-                                                info = Console.ReadKey(true);
-                                                if (info.Key == ConsoleKey.Enter)
-                                                    flag = true;
-                                            }
-                                            else
-                                            {
-                                                bool flag2 = false;
-                                                while (true)
-                                                {
-                                                    MenuPages.Election2Menu();
-                                                    var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
-                                                    if (!isValidCh)
-                                                    {
-                                                        Console.Clear();
-                                                        Console.WriteLine("Please enter a number between 1-6 !!!!!");
-                                                        Console.WriteLine("\nPress any key to enter again or press enter to return to the previous menu...");
-                                                        info = Console.ReadKey(true);
-                                                        if (info.Key == ConsoleKey.Enter)
-                                                            break;
-                                                    }
-                                                    else
-                                                    {
-                                                        string partyid = "";
-                                                        switch (choice)
-                                                        {
-                                                            case 1:
-                                                                partyid = GetPartyID(con, "Party A");
-                                                                UpdateTables(con, cmd, info, partyid,"2","Party A");
-                                                                flag2 = true;
-                                                                break;
-                                                            case 2:
-                                                                partyid = GetPartyID(con, "Party B");
-                                                                UpdateTables(con, cmd,  info,partyid,"2","Party B");
-                                                                flag2 = true;
-                                                                break;
-                                                            case 3:
-                                                                partyid = GetPartyID(con, "Party C");
-                                                                UpdateTables(con, cmd,info, partyid,"2","Party C");
-                                                                flag2 = true;
-                                                                break;
-                                                            case 4:
-                                                                partyid = GetPartyID(con, "Party D");
-                                                                UpdateTables(con, cmd,info,partyid,"2","Party D");
-                                                                flag2 = true;
-                                                                break;
-                                                            case 5:
-                                                                partyid = GetPartyID(con, "Party E");
-                                                                UpdateTables(con, cmd,info,partyid,"2","Party E");
-                                                                flag2 = true;
-                                                                break;
-                                                            case 6:
-                                                                partyid = GetPartyID(con, "Party F");
-                                                                UpdateTables(con, cmd,info,partyid,"2","Party F");
-                                                                flag2 = true;
-                                                                break;
-                                                            default:
-                                                                Console.Clear();
-                                                                Console.WriteLine("Please enter a valid choice!!!");
-                                                                Console.WriteLine("\nPress any key to return to enter your choice again or press enter to return to the previous menu...");
-                                                                info = Console.ReadKey(true);
-                                                                if (info.Key == ConsoleKey.Enter)
-                                                                    flag2 = true;
-                                                                break;
-                                                        }
-                                                        if (flag)
-                                                            break;
-                                                    }
-                                                    if (flag2)
-                                                        break;
-                                                }
-                                            }
-                                        }
+                                        VoteInElection2(con);
                                         break;
                                     case 3:
-                                        flag = true;
+                                        returnToMainMenu = true;
                                         break;
                                     default:
                                         Console.Clear();
@@ -208,10 +57,10 @@ namespace Voting_App
                                         Console.WriteLine("\nPress any key to return to enter your choice again or press enter to return to the main menu...");
                                         info = Console.ReadKey(true);
                                         if (info.Key == ConsoleKey.Enter)
-                                            flag = true;
+                                            returnToMainMenu = true;
                                         break;
                                 }
-                                if (flag)
+                                if (returnToMainMenu)
                                     break;
                              
                             }
@@ -223,7 +72,7 @@ namespace Voting_App
                                 info = Console.ReadKey(true);
                                 if (info.Key == ConsoleKey.Enter)
                                 {
-                                    flag = true;
+                                    returnToMainMenu = true;
                                     break;
                                 }
                             }
@@ -236,7 +85,7 @@ namespace Voting_App
                         Console.WriteLine("\nPress any key to enter Voter ID again or press enter to return to the main menu...");
                         info = Console.ReadKey(true);
                         if (info.Key == ConsoleKey.Enter)
-                            flag = true;
+                            returnToMainMenu = true;
 
                     }
                 }
@@ -247,11 +96,11 @@ namespace Voting_App
                     Console.WriteLine("\nPress any key to enter Voter ID again or press enter to return to the main menu...");
                     info = Console.ReadKey(true);
                     if (info.Key == ConsoleKey.Enter)
-                        flag = true;
+                        returnToMainMenu = true;
 
                 }
 
-                if (flag)
+                if (returnToMainMenu)
                   break;
 
             }
@@ -269,7 +118,7 @@ namespace Voting_App
             Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
             info = Console.ReadKey(true);
             if (info.Key == ConsoleKey.Enter)
-                flag = true;
+                returnToMainMenu = true;
 
         }
 
@@ -281,6 +130,170 @@ namespace Voting_App
             if (rdr.Read())
                 partyID = Convert.ToString(rdr.GetValue(0));
             return partyID;
+        }
+
+        private static void VoteInElection1(SqlConnection con)
+        {
+            ConsoleKeyInfo info = default;
+            SqlCommand cmd = default;
+            string sql = @"select hasvoted from votingstatus where electionid=1 and voterid=" + voterID;
+            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
+            if (rdr.Read())
+            {
+                if (rdr.GetBoolean(0))
+                {
+                    Console.Clear();
+                    Console.WriteLine("You have already voted in Election 1!!!!");
+                    Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
+                    info = Console.ReadKey(true);
+                    if (info.Key == ConsoleKey.Enter)
+                        returnToMainMenu = true;
+                }
+                else
+                {
+                    while (true)
+                    {
+                        MenuPages.Election1Menu();
+                        bool returnToPreviousMenu = false;
+                        var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
+                        if (!isValidCh)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Please enter a number between 1-4 !!!!!");
+                            Console.WriteLine("\nPress any key to enter again or press enter to return to the previous menu...");
+                            info = Console.ReadKey(true);
+                            if (info.Key == ConsoleKey.Enter)
+                                break;
+                        }
+                        else
+                        {
+                            string partyid = "";
+                            switch (choice)
+                            {
+                                case 1:
+                                    partyid = GetPartyID(con, "Party A");
+                                    UpdateTables(con, cmd, info, partyid, "1", "Party A");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 2:
+                                    partyid = GetPartyID(con, "Party B");
+                                    UpdateTables(con, cmd, info, partyid, "1", "Party B");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 3:
+                                    partyid = GetPartyID(con, "Party F");
+                                    UpdateTables(con, cmd, info, partyid, "1", "Party F");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 4:
+                                    partyid = GetPartyID(con, "NOTA");
+                                    UpdateTables(con, cmd, info, partyid, "1", "NOTA");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine("Please enter a valid choice!!!");
+                                    Console.WriteLine("\nPress any key to return to enter your choice again or press enter to the previous menu...");
+                                    info = Console.ReadKey(true);
+                                    if (info.Key == ConsoleKey.Enter)
+                                        returnToPreviousMenu = true;
+                                    break;
+                            }
+                            if (returnToMainMenu)
+                                break;
+                        }
+                        if (returnToPreviousMenu)
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static void VoteInElection2(SqlConnection con)
+        {
+            ConsoleKeyInfo info = default;
+            SqlCommand cmd = default;
+            string sql = @"select hasvoted from votingstatus where electionid=2 and voterid=" + voterID;
+            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql, con);
+            if (rdr.Read())
+            {
+                if (rdr.GetBoolean(0))
+                {
+                    Console.Clear();
+                    Console.WriteLine("You have already voted in Election 2!!!!");
+                    Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
+                    info = Console.ReadKey(true);
+                    if (info.Key == ConsoleKey.Enter)
+                        returnToMainMenu = true;
+                }
+                else
+                {
+                    bool returnToPreviousMenu = false;
+                    while (true)
+                    {
+                        MenuPages.Election2Menu();
+                        var isValidCh = int.TryParse(Console.ReadLine(), out int choice);
+                        if (!isValidCh)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Please enter a number between 1-6 !!!!!");
+                            Console.WriteLine("\nPress any key to enter again or press enter to return to the previous menu...");
+                            info = Console.ReadKey(true);
+                            if (info.Key == ConsoleKey.Enter)
+                                break;
+                        }
+                        else
+                        {
+                            string partyid = "";
+                            switch (choice)
+                            {
+                                case 1:
+                                    partyid = GetPartyID(con, "Party A");
+                                    UpdateTables(con, cmd, info, partyid, "2", "Party A");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 2:
+                                    partyid = GetPartyID(con, "Party B");
+                                    UpdateTables(con, cmd, info, partyid, "2", "Party B");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 3:
+                                    partyid = GetPartyID(con, "Party C");
+                                    UpdateTables(con, cmd, info, partyid, "2", "Party C");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 4:
+                                    partyid = GetPartyID(con, "Party D");
+                                    UpdateTables(con, cmd, info, partyid, "2", "Party D");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 5:
+                                    partyid = GetPartyID(con, "Party E");
+                                    UpdateTables(con, cmd, info, partyid, "2", "Party E");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                case 6:
+                                    partyid = GetPartyID(con, "NOTA");
+                                    UpdateTables(con, cmd, info, partyid, "2", "NOTA");
+                                    returnToPreviousMenu = true;
+                                    break;
+                                default:
+                                    Console.Clear();
+                                    Console.WriteLine("Please enter a valid choice!!!");
+                                    Console.WriteLine("\nPress any key to return to enter your choice again or press enter to return to the previous menu...");
+                                    info = Console.ReadKey(true);
+                                    if (info.Key == ConsoleKey.Enter)
+                                        returnToPreviousMenu = true;
+                                    break;
+                            }
+                            if (returnToMainMenu)
+                                break;
+                        }
+                        if (returnToPreviousMenu)
+                            break;
+                    }
+                }
+            }
         }
       
     }

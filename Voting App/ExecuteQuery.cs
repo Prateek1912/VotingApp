@@ -15,14 +15,13 @@ namespace Voting_App
             SqlDataReader rdr = cmd.ExecuteReader();
             return rdr;
         }
-
         public static void ExecuteUpdateQuery(string query, SqlConnection con)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
             SqlCommand cmd = new SqlCommand(query, con);
             adapter.UpdateCommand = new SqlCommand(query, con);
             adapter.UpdateCommand.ExecuteNonQuery();
-
+            
         }
     }
 }
