@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 
 namespace Voting_App
 {
@@ -20,44 +17,38 @@ namespace Voting_App
     5. Exit");
             Console.WriteLine();
             Console.Write("Enter your choice (1-5): ");
-
         }
-
         public static void ElectionMenu()
         {
             Console.Clear();
-            Console.WriteLine(@"1. Election 1
-2. Election 2
-3. Exit");
-            Console.Write("\nEnter your choice (1-3): ");
+            int i = 0;
+            Console.WriteLine("ELECTIONS:\n");
+            string sql = @"select distinct(electionid) from partystatus";
+            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+            while (rdr.Read())
+            {
+                Console.WriteLine((++i) + ". Election " + rdr.GetValue(0));
+            }
+            Console.WriteLine((++i) + ". Exit");
+            Console.Write("\nEnter your choice (1-" + i + "): ");
         }
-
-        public static void Election1Menu()
+        public static void PartyMenu(int electionid)
         {
             Console.Clear();
-            Console.WriteLine("PARTIES:");
-            Console.WriteLine(@"
-1. Party A
-2. Party B
-3. Party F
-4. None of the above");
+            Console.WriteLine("PARTIES:\n");
+            int i = 0;
+            SqlDataReader rdr;
+            string sql = @"select partyid from partystatus where electionid=" + electionid;
+            rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+            while (rdr.Read())
+            {
+                sql = @"select name from parties where partyid=" + rdr.GetValue(0);
+                SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(sql);
+                if (reader.Read())
+                    Console.WriteLine((++i) + ". " + reader.GetString(0));
+            }
             Console.WriteLine();
-            Console.Write("Enter your choice (1-4): ");
-        }
-
-        public static void Election2Menu()
-        {
-            Console.Clear();
-            Console.WriteLine("PARTIES:");
-            Console.WriteLine(@"
-1. Party A
-2. Party B
-3. Party C
-4. Party D
-5. Party E
-6. None of the above");
-            Console.WriteLine();
-            Console.Write("Enter your choice (1-6): ");
+            Console.Write("Enter your choice (1-" + i + "): ");
         }
     }
 }

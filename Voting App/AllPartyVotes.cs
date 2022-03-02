@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 
 namespace Voting_App
 {
     internal class AllPartyVotes
-    {
-        public static void AllPartyVotesFunc(SqlConnection con)
+    { 
+        public void AllPartyVotesFunc()
         {
-            bool returnToMainMenu= false;
-            ConsoleKeyInfo info=default;
-            SqlCommand cmd=default;
-            var obj=new AllPartyVotes();    
+            bool returnToMainMenu = false;
+            ConsoleKeyInfo info;
+            string sql;
+            SqlDataReader rdr;
+            
             while (true)
             {
                 Console.Clear();
@@ -28,32 +25,49 @@ namespace Voting_App
                         var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
                         if (isValidChoice)
                         {
-                            switch (ch)
+                            sql = @"select count(distinct(electionid)) from partystatus";
+                            rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                            int noOfElections = 0;
+
+                            if (rdr.Read())
+                                noOfElections = rdr.GetInt32(0);
+
+                            if (ch > noOfElections || ch < 1)
                             {
-                                case 1:
-                                    obj.Print(con, cmd, info, "1");
-                                    break;
-                                case 2:
-                                    obj.Print(con, cmd, info, "2");
-                                    break;
-                                case 3:
+                                if (ch == noOfElections + 1)
+                                {
                                     returnToMainMenu = true;
                                     break;
-                                default:
-                                    Console.Clear();
-                                    Console.WriteLine("Please enter a valid choice!!!!!");
-                                    Console.WriteLine("\nPress any key to return to enter your choice again or press enter to return to the main menu...");
-                                    info = Console.ReadKey(true);
-                                    if (info.Key == ConsoleKey.Enter)
-                                        returnToMainMenu = true;
-                                    break;
+                                }
+                                Console.Clear();
+                                Console.WriteLine("Please enter a valid choice!!!!");
+                                Console.WriteLine("\nPress any key to enter again or press enter to return to the main menu...");
+                                info = Console.ReadKey(true);
+                                if (info.Key == ConsoleKey.Enter)
+                                    returnToMainMenu = true;
                             }
-                              
+                            else
+                            {
+                                sql = @"select distinct(electionid) from partystatus";
+                                rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                                int row = 1;
+                                while (rdr.Read())
+                                {
+                                    if (ch == row)
+                                    {
+                                        this.Print(rdr.GetInt32(0));
+                                        break;
+                                    }
+                                    row++;
+                                }
+                            }
+                            if (returnToMainMenu)
+                                break;
                         }
                         else
                         {
                             Console.Clear();
-                            Console.WriteLine("Please enter a number between 1 to 3 !!!!!");
+                            Console.WriteLine("Please enter a valid choice!!!!!");
                             Console.WriteLine("\nPress any key to enter your choice again or press enter to return to the main menu...");
                             info = Console.ReadKey(true);
                             if (info.Key == ConsoleKey.Enter)
@@ -77,12 +91,11 @@ namespace Voting_App
             }
 
         }
-
-        public virtual void Print(SqlConnection con, SqlCommand cmd, ConsoleKeyInfo info, string electionid)
+        public virtual void Print(int electionid)
         {
             Console.Clear();
-            string query = @"select parties.name,partystatus.votes from parties,PartyStatus where parties.partyid=PartyStatus.partyid and electionid="+electionid+"order by PartyStatus.votes desc";
-            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query, con);
+            string query = @"select parties.name,partystatus.votes from parties,PartyStatus where parties.partyid=PartyStatus.partyid and electionid=" + electionid + "order by PartyStatus.votes desc";
+            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query);
             Console.WriteLine("ELECTION {0} STANDINGS:\n", electionid);
             Console.WriteLine("PARTY                VOTES\n");
             while (reader.Read())
@@ -95,7 +108,7 @@ namespace Voting_App
                 }
             }
             Console.WriteLine("\nPress any key to return to the previous menu.....");
-            info = Console.ReadKey(true);
+            Console.ReadKey(true);
         }
     }
 }

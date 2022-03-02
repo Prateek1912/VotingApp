@@ -1,67 +1,61 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace Voting_App
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            ConsoleKeyInfo info;
-            using (SqlConnection con = new SqlConnection(@"Data Source=DESKTOP-5UK5U70\SQLEXPRESS;Initial Catalog=VotingApp;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;MultipleActiveResultSets=true"))
+            while (true)
             {
-                con.Open();
-                while (true)
+                MenuPages.MainMenu();
+                bool exitFromApp = false;
+                var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
+                if (!isValidChoice)
                 {
-                    MenuPages.MainMenu();
-                    bool exitFromApp = false;
-                    var isValidChoice = int.TryParse(Console.ReadLine(), out int ch);
-                    if (!isValidChoice)
+                    Console.Clear();
+                    Console.WriteLine("Please enter a number between 1-5 !!!!!");
+                    Console.WriteLine("\nPress any key to return to the main menu...");
+                    Console.ReadKey(true);
+                }
+                else
+                {
+                    switch (ch)
                     {
-                        Console.Clear();
-                        Console.WriteLine("Please enter a number between 1-5 !!!!!");
-                        Console.WriteLine("\nPress any key to return to the main menu...");
-                        info = Console.ReadKey(true);
-                    }
-                    else
-                    {
-                        switch (ch)
-                        {
-                            case 1:
-                                Vote.VoteFunc(con);
-                                break;
-                            case 2:
-                                LeadingParty.LeadingPartyFunc(con);
-                                break;
-                            case 3:
-                                AllPartyVotes.AllPartyVotesFunc(con);
-                                break;
-                            case 4:
-                                Registration.RegistrationFunc(con);
-                                break;
-                            case 5:
-                                Console.WriteLine("\nThank you for using this app!!! Hope to see you soon!!!\n");
-                                exitFromApp = true;
-                                break;
-                            default:
-                                Console.WriteLine("Please enter a valid choice!!!!");
-                                Console.WriteLine("\nPress any key to return to the main menu...");
-                                info = Console.ReadKey(true);
-                                break;
-                        }
-                        if(exitFromApp)
+                        case 1:
+                            Vote.VoteFunc();
                             break;
+                        case 2:
+                            LeadingParty.LeadingPartyFunc();
+                            break;
+                        case 3:
+                            var obj = new AllPartyVotes();
+                            obj.AllPartyVotesFunc();
+                            break;
+                        case 4:
+                            Registration.RegistrationFunc();
+                            break;
+                        case 5:
+                            Console.WriteLine("\nThank you for using this app!!! Hope to see you soon!!!\n");
+                            exitFromApp = true;
+                            break;
+                        default:
+                            Console.WriteLine("Please enter a valid choice!!!!");
+                            Console.WriteLine("\nPress any key to return to the main menu...");
+                            Console.ReadKey(true);
+                            break;
+                    }
+                    if (exitFromApp)
+                    {
+                        ExecuteQuery.CloseConnection();
+                        break;
                     }
                 }
             }
         }
-
+          
         public static string ReadPassword()
         {
             string password = "";
@@ -77,19 +71,14 @@ namespace Voting_App
                 {
                     if (!string.IsNullOrEmpty(password))
                     {
-                        // remove one character from the list of password characters
                         password = password.Substring(0, password.Length - 1);
-                        // get the location of the cursor
                         int pos = Console.CursorLeft;
-                        // move the cursor to the left by one character
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
-                        // replace it with space
                         Console.Write(" ");
-                        // move the cursor to the left by one character again
                         Console.SetCursorPosition(pos - 1, Console.CursorTop);
                     }
                 }
-                info = Console.ReadKey(true);
+                info=Console.ReadKey(true);
             }
             return password;
         }
