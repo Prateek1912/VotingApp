@@ -15,12 +15,12 @@ namespace Voting_App
         public override void Print(int electionid)
         {
             string query = @"select distinct(parties.name),partystatus.votes from parties,partystatus where partystatus.electionid=" + electionid + " and parties.partyid=partystatus.partyid and parties.name!='NOTA' and partystatus.votes=(select max(votes) from partystatus where electionid=" + electionid + ")";
-            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query);
+            SqlDataReader partyNameAndVotes = ExecuteQuery.ExecuteSelectQuery(query);
             Console.Clear();
             var dictionary = new Dictionary<string, string>();
-            while (reader.Read())
+            while (partyNameAndVotes.Read())
             {
-                dictionary.Add(reader.GetString(0), Convert.ToString(reader.GetValue(1)));
+                dictionary.Add(partyNameAndVotes.GetString(0), Convert.ToString(partyNameAndVotes.GetValue(1)));
             }
             int i;
             if (dictionary.Count > 1)

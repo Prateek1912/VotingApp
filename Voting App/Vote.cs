@@ -10,7 +10,6 @@ namespace Voting_App
         public static void VoteFunc()
         {
             ConsoleKeyInfo info;
-            SqlDataReader rdr;
             string sql;
             returnToMainMenu = false;
             while (true)
@@ -22,8 +21,8 @@ namespace Voting_App
                 if (isVoterIDValid && voterID.Length == 6)
                 {
                     sql = "SELECT * from voters where voterid=" + voterID;
-                    rdr = ExecuteQuery.ExecuteSelectQuery(sql);
-                    if (rdr.HasRows)
+                    SqlDataReader detailsOfVoterID = ExecuteQuery.ExecuteSelectQuery(sql);
+                    if (detailsOfVoterID.HasRows)
                     {
                         while (true)
                         {
@@ -32,11 +31,11 @@ namespace Voting_App
                             if (isValidChoice)
                             {
                                 sql = @"select count(distinct(electionid)) from partystatus";
-                                rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                                SqlDataReader countOfElections = ExecuteQuery.ExecuteSelectQuery(sql);
                                 int noOfElections = 0;
 
-                                if (rdr.Read())
-                                    noOfElections = rdr.GetInt32(0);
+                                if (countOfElections.Read())
+                                    noOfElections = countOfElections.GetInt32(0);
 
                                 if (ch > noOfElections || ch < 1)
                                 {
@@ -55,13 +54,13 @@ namespace Voting_App
                                 else
                                 {
                                     sql = @"select distinct(electionid) from partystatus";
-                                    rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                                    SqlDataReader electionID = ExecuteQuery.ExecuteSelectQuery(sql);
                                     int row = 1;
-                                    while (rdr.Read())
+                                    while (electionID.Read())
                                     {
                                         if (ch == row)
                                         {
-                                            VoteInElection(rdr.GetInt32(0));
+                                            VoteInElection(electionID.GetInt32(0));
                                             break;
                                         }
                                         row++;
@@ -122,9 +121,9 @@ namespace Voting_App
             ExecuteQuery.ExecuteUpdateQuery(sql);
             Console.Clear();
             sql = @"select name from parties where partyid=" + partyid;
-            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql);
-            if (rdr.Read())
-                Console.WriteLine("Congratulations!!! You have successfully voted for {0}!!!", rdr.GetString(0));
+            SqlDataReader partyName = ExecuteQuery.ExecuteSelectQuery(sql);
+            if (partyName.Read())
+                Console.WriteLine("Congratulations!!! You have successfully voted for {0}!!!", partyName.GetString(0));
             Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
             info = Console.ReadKey(true);
             if (info.Key == ConsoleKey.Enter)
@@ -133,12 +132,12 @@ namespace Voting_App
         }
         private static void VoteInElection(int electionid)
         {
-            ConsoleKeyInfo info = default;
+            ConsoleKeyInfo info;
             string sql = @"select hasvoted from votingstatus where electionid=" + electionid + "and voterid=" + voterID;
-            SqlDataReader rdr = ExecuteQuery.ExecuteSelectQuery(sql);
-            if (rdr.Read())
+            SqlDataReader hasVoted = ExecuteQuery.ExecuteSelectQuery(sql);
+            if (hasVoted.Read())
             {
-                if (rdr.GetBoolean(0))
+                if (hasVoted.GetBoolean(0))
                 {
                     Console.Clear();
                     Console.WriteLine("You have already voted in Election" + electionid + "!!!!");
@@ -166,11 +165,11 @@ namespace Voting_App
                         else
                         {
                             sql = @"select count(partyid) from partystatus where electionid=" + electionid;
-                            rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                            SqlDataReader countOfParties = ExecuteQuery.ExecuteSelectQuery(sql);
 
                             int noOfParties = 0;
-                            if (rdr.Read())
-                                noOfParties = rdr.GetInt32(0);
+                            if (countOfParties.Read())
+                                noOfParties = countOfParties.GetInt32(0);
 
                             if (choice > noOfParties || choice < 1)
                             {
@@ -184,13 +183,13 @@ namespace Voting_App
                             else
                             {
                                 sql = @"select partyid from partystatus where electionid=" + electionid;
-                                rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                                SqlDataReader partyID = ExecuteQuery.ExecuteSelectQuery(sql);
                                 int row = 1;
-                                while (rdr.Read())
+                                while (partyID.Read())
                                 {
                                     if (choice == row)
                                     {
-                                        UpdateTables(rdr.GetInt32(0), electionid);
+                                        UpdateTables(partyID.GetInt32(0), electionid);
                                         returnToPreviousMenu = true;
                                         break;
                                     }

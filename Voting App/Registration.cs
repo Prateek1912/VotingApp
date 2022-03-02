@@ -11,7 +11,6 @@ namespace Voting_App
         public static void RegistrationFunc()
         {
             ConsoleKeyInfo info;
-            SqlDataReader reader;
             bool returnToMainMenu = false;
             while (true)
             {
@@ -34,8 +33,8 @@ namespace Voting_App
                 {
                     Console.Clear();
                     string query = @"select aadhar from voters where aadhar='" + aadhar + "'";
-                    reader = ExecuteQuery.ExecuteSelectQuery(query);
-                    if (reader.HasRows)
+                    SqlDataReader aadharNo = ExecuteQuery.ExecuteSelectQuery(query);
+                    if (aadharNo.HasRows)
                     {
                         Console.Clear();
                         Console.WriteLine("Aadhar number already registered!!!! Please enter some other aadhar number");
@@ -65,9 +64,9 @@ namespace Voting_App
                             else
                             {
                                 string sql = @"select max(voterid) from voters";
-                                reader = ExecuteQuery.ExecuteSelectQuery(sql);
-                                if (reader.Read())
-                                    voterID = Convert.ToInt32(reader.GetValue(0)) + 1;
+                                SqlDataReader maxVoterID = ExecuteQuery.ExecuteSelectQuery(sql);
+                                if (maxVoterID.Read())
+                                    voterID = Convert.ToInt32(maxVoterID.GetValue(0)) + 1;
 
                                 name = "'" + name + "'";
                                 aadhar = "'" + aadhar + "'";

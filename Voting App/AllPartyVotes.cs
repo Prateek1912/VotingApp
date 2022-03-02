@@ -10,7 +10,6 @@ namespace Voting_App
             bool returnToMainMenu = false;
             ConsoleKeyInfo info;
             string sql;
-            SqlDataReader rdr;
             
             while (true)
             {
@@ -26,11 +25,11 @@ namespace Voting_App
                         if (isValidChoice)
                         {
                             sql = @"select count(distinct(electionid)) from partystatus";
-                            rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                            SqlDataReader electionIDs = ExecuteQuery.ExecuteSelectQuery(sql);
                             int noOfElections = 0;
 
-                            if (rdr.Read())
-                                noOfElections = rdr.GetInt32(0);
+                            if (electionIDs.Read())
+                                noOfElections = electionIDs.GetInt32(0);
 
                             if (ch > noOfElections || ch < 1)
                             {
@@ -49,13 +48,13 @@ namespace Voting_App
                             else
                             {
                                 sql = @"select distinct(electionid) from partystatus";
-                                rdr = ExecuteQuery.ExecuteSelectQuery(sql);
+                                SqlDataReader electionID = ExecuteQuery.ExecuteSelectQuery(sql);
                                 int row = 1;
-                                while (rdr.Read())
+                                while (electionID.Read())
                                 {
                                     if (ch == row)
                                     {
-                                        this.Print(rdr.GetInt32(0));
+                                        this.Print(electionID.GetInt32(0));
                                         break;
                                     }
                                     row++;
@@ -95,16 +94,16 @@ namespace Voting_App
         {
             Console.Clear();
             string query = @"select parties.name,partystatus.votes from parties,PartyStatus where parties.partyid=PartyStatus.partyid and electionid=" + electionid + "order by PartyStatus.votes desc";
-            SqlDataReader reader = ExecuteQuery.ExecuteSelectQuery(query);
+            SqlDataReader partyNameAndVotes = ExecuteQuery.ExecuteSelectQuery(query);
             Console.WriteLine("ELECTION {0} STANDINGS:\n", electionid);
             Console.WriteLine("PARTY                VOTES\n");
-            while (reader.Read())
+            while (partyNameAndVotes.Read())
             {
-                if (reader.GetString(0) == "NOTA")
-                    Console.WriteLine("None of the Above      {0}", Convert.ToString(reader.GetValue(1)));
+                if (partyNameAndVotes.GetString(0) == "NOTA")
+                    Console.WriteLine("None of the Above      {0}", Convert.ToString(partyNameAndVotes.GetValue(1)));
                 else
                 {
-                    Console.WriteLine("{0}                {1}", reader.GetString(0), Convert.ToString(reader.GetValue(1)));
+                    Console.WriteLine("{0}                {1}", partyNameAndVotes.GetString(0), Convert.ToString(partyNameAndVotes.GetValue(1)));
                 }
             }
             Console.WriteLine("\nPress any key to return to the previous menu.....");
