@@ -204,6 +204,15 @@ namespace Voting_App
                     }
                 }
             }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("You are not eligible to vote in election "+electionid+"!!!!");
+                Console.WriteLine("\nPress any key to return to the previous menu or press enter to return to the main menu...");
+                info = Console.ReadKey(true);
+                if (info.Key == ConsoleKey.Enter)
+                    returnToMainMenu = true;
+            }
         }
     }
 }
